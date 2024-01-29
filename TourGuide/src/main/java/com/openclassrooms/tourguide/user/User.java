@@ -1,9 +1,6 @@
 package com.openclassrooms.tourguide.user;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import gpsUtil.location.VisitedLocation;
 import tripPricer.Provider;
@@ -68,13 +65,25 @@ public class User {
 	public void clearVisitedLocations() {
 		visitedLocations.clear();
 	}
-	
+
 	public void addUserReward(UserReward userReward) {
-		if(userRewards.stream().filter(r -> !r.attraction.attractionName.equals(userReward.attraction)).count() == 0) {
-			userRewards.add(userReward);
+		// Use an iterator to avoid concurrency issues
+		Iterator<UserReward> rewardIterator = userRewards.iterator();
+
+		while (rewardIterator.hasNext()) {
+			UserReward existingReward = rewardIterator.next();
+
+			// Check if the reward for this attraction already exists
+			if (existingReward.attraction.attractionName.equals(userReward.attraction.attractionName)) {
+				return; // Exit the method if the reward already exists
+			}
 		}
+
+		// Add the new reward if it does not yet exist
+		userRewards.add(userReward);
 	}
-	
+
+
 	public List<UserReward> getUserRewards() {
 		return userRewards;
 	}
