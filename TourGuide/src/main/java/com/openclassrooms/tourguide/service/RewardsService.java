@@ -2,6 +2,9 @@ package com.openclassrooms.tourguide.service;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.springframework.stereotype.Service;
 
@@ -23,6 +26,7 @@ public class RewardsService {
 	private int attractionProximityRange = 200;
 	private final GpsUtil gpsUtil;
 	private final RewardCentral rewardsCentral;
+	private final ExecutorService executorService = Executors.newFixedThreadPool(50);
 	
 	public RewardsService(GpsUtil gpsUtil, RewardCentral rewardCentral) {
 		this.gpsUtil = gpsUtil;
@@ -38,30 +42,38 @@ public class RewardsService {
 	}
 
 	public void calculateRewards(User user) {
-		List<VisitedLocation> userLocations = user.getVisitedLocations();
-		List<Attraction> attractions = gpsUtil.getAttractions();
+		calculateRewardsAsync(user).join();
+	}
+	public CompletableFuture<Void> calculateRewardsAsync(User user) {
+		CompletableFuture<Void> completableFuture = new CompletableFuture<>();
+		executorService.submit(() -> {
+			List<VisitedLocation> userLocations = user.getVisitedLocations();
+			List<Attraction> attractions = gpsUtil.getAttractions();
 
-		// Use an iterator to avoid concurrency issues
-		Iterator<Attraction> attractionIterator = attractions.iterator();
+			// Use an iterator to avoid concurrency issues
+			Iterator<Attraction> attractionIterator = attractions.iterator();
 
-		while (attractionIterator.hasNext()) {
-			Attraction attraction = attractionIterator.next();
+			while (attractionIterator.hasNext()) {
+				Attraction attraction = attractionIterator.next();
 
-			// Check if the user does not already have a reward for this attraction
-			boolean hasReward = user.getUserRewards().stream()
-					.anyMatch(r -> r.attraction.attractionName.equals(attraction.attractionName));
+				// Check if the user does not already have a reward for this attraction
+				boolean hasReward = user.getUserRewards().stream()
+						.anyMatch(r -> r.attraction.attractionName.equals(attraction.attractionName));
 
-			if (!hasReward) {
-				for (VisitedLocation visitedLocation : userLocations) {
-					if (nearAttraction(visitedLocation, attraction)) {
-						user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
+				if (!hasReward) {
+					for (VisitedLocation visitedLocation : userLocations) {
+						if (nearAttraction(visitedLocation, attraction)) {
+							user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
 
-						// Leave the loop to move on to the next attraction
-						break;
+							// Leave the loop to move on to the next attraction
+							break;
+						}
 					}
 				}
 			}
-		}
+			completableFuture.complete(null);
+		});
+		return completableFuture;
 	}
 
 	public boolean isWithinAttractionProximity(Attraction attraction, Location location) {

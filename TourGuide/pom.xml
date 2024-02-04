@@ -76,6 +76,12 @@
 			<version>RELEASE</version>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
+			<version>4.4</version> <!-- Utilisez la version la plus récente -->
+		</dependency>
+
 	</dependencies>
 
 	<build>
