@@ -24,3 +24,9 @@ jobs:
       - name: Build and test
         run: mvn clean install --file TourGuide/pom.xml
 
+      - name: Upload JAR as artifact
+        uses: actions/upload-artifact@v3
+        with:
+            name: tourguide-jar
+            path: TourGuide/target/tourguide-0.0.1-SNAPSHOT.jar
+
