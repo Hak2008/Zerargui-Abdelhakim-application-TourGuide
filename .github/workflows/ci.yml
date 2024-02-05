@@ -22,7 +22,7 @@ jobs:
 
       - name: Build and test
         run: |
-          ./gradlew build
+          ./mvnw clean install
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
