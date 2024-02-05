@@ -22,10 +22,11 @@ jobs:
 
       - name: Build and test
         run: |
-          ./mvnw clean install
+          java -version
+          ./mvn clean install
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: my-artifacts
-          path: build/libs/
+          path: target/
