@@ -14,17 +14,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up JDK
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          distribution: 'adopt'
           java-version: '17'
-
-      - name: Change to project directory
-        run: cd TourGuide
+          distribution: 'temurin'
+          cache: maven
 
       - name: Build and test
-        run: mvn clean install
+        run: mvn clean install --file TourGuide/pom.xml
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
