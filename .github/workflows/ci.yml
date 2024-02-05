@@ -23,7 +23,7 @@ jobs:
       - name: Build and test
         run: |
           java -version
-          ./mvn clean install
+          ./mvnw clean install
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
