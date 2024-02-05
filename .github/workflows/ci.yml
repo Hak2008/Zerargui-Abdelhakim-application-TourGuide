@@ -24,8 +24,3 @@ jobs:
       - name: Build and test
         run: mvn clean install --file TourGuide/pom.xml
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: my-artifacts
-          path: target/
