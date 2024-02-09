@@ -1,8 +1,6 @@
 package com.openclassrooms.tourguide;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -30,7 +28,11 @@ public class TourGuideController {
 
 	@Autowired
 	TourGuideService tourGuideService;
+
+    @Autowired
     RewardsService rewardsService;
+
+    @Autowired
     RewardCentral rewardCentral;
 	
     @RequestMapping("/")
@@ -57,7 +59,6 @@ public class TourGuideController {
         try {
             VisitedLocation visitedLocation = tourGuideService.getUserLocation(getUser(userName));
             List<Attraction> nearbyAttractions = tourGuideService.getNearByAttractions(visitedLocation);
-
 
             // Create a new JSON object with the required information
             ObjectMapper objectMapper = new ObjectMapper();
@@ -86,7 +87,6 @@ public class TourGuideController {
         }
     }
 
-    
     @RequestMapping("/getRewards") 
     public List<UserReward> getRewards(@RequestParam String userName) {
     	return tourGuideService.getUserRewards(getUser(userName));
@@ -100,6 +100,5 @@ public class TourGuideController {
     private User getUser(String userName) {
     	return tourGuideService.getUser(userName);
     }
-   
 
 }

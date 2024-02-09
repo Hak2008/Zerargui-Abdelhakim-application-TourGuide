@@ -83,7 +83,6 @@ public class User {
 		userRewards.add(userReward);
 	}
 
-
 	public List<UserReward> getUserRewards() {
 		return userRewards;
 	}
