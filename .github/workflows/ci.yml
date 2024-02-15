@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - main
+      - master
       - dev
 
 jobs:
@@ -21,8 +21,14 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Build and test
-        run: mvn clean install --file TourGuide/pom.xml
+      - name: Compile code
+        run: mvn compile --file TourGuide/pom.xml
+
+      - name: Run tests
+        run: mvn test --file TourGuide/pom.xml
+
+      - name: Build test JAR
+        run: mvn clean package -DskipTests --file TourGuide/pom.xml
 
       - name: Upload JAR as artifact
         uses: actions/upload-artifact@v3
